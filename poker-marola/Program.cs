@@ -4,6 +4,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        int x = 9, y = 7, z;
+
+        z = x - y;
+
+        Console.WriteLine($"djao{z}jfioaçd");
+
     }
 }
