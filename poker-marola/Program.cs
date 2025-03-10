@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 
 namespace poker_marola;
 
@@ -29,16 +30,27 @@ internal static class Program
             |_|  |_|\__,_|_|  \___/|_|\__,_|
                          
             """);
+        string[] authors = [
+            "Autores: ",
+            "- João Vítor Guterres Giovelli",
+            "- Rodrigo Appelt"
+        ];
+        Console.WriteLine(BuildMessageBox(authors));
         Version version = Assembly.GetExecutingAssembly().GetName().Version!;
-        string versionString = $"{version.Major}.{version.Minor}.{version.Build}";
-        int trailingSpaces = 51 - 10 - versionString.Length - 1;
-        Console.WriteLine(
-            $"""
-             #-------------------------------------------------#
-             | Feito por: João Vitor Guterres e Rodrigo Appelt |
-             | Versão: {versionString}{new string(' ', trailingSpaces)}|
-             #-------------------------------------------------#
-             """);
+        Console.WriteLine(BuildMessageBox([ $"Versão: {version.ToString(3)}" ]));
+    }
+    
+    private static string BuildMessageBox(string[] lines) {
+        const int padding = 1;
+        int width = lines.Max(x => x.Length) + padding*2 + 2;
+        string separator = "#" + new string('-', width-2) + "#";
+        StringBuilder sb = new();
+        sb.AppendLine(separator);
+        foreach (string line in lines) {
+            sb.AppendLine($"| {line}{new string(' ', width - line.Length - 2 - padding*2)} |");
+        }
+        sb.AppendLine(separator);
+        return sb.ToString();
     }
 
     private static void ShowMenu() {
