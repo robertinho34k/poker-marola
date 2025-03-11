@@ -35,25 +35,31 @@ internal static class Program
             "- João Vítor Guterres Giovelli",
             "- Rodrigo Appelt"
         ];
-        Console.WriteLine(BuildMessageBox(authors));
+        Console.WriteLine(Tui.BuildMessageBox(authors));
         Version version = Assembly.GetExecutingAssembly().GetName().Version!;
-        Console.WriteLine(BuildMessageBox([ $"Versão: {version.ToString(3)}" ]));
+        Console.WriteLine(Tui.BuildMessageBox([ $"Versão: {version.ToString(3)}" ]));
     }
     
-    private static string BuildMessageBox(string[] lines) {
-        const int padding = 1;
-        int width = lines.Max(x => x.Length) + padding*2 + 2;
-        string separator = "#" + new string('-', width-2) + "#";
-        StringBuilder sb = new();
-        sb.AppendLine(separator);
-        foreach (string line in lines) {
-            sb.AppendLine($"| {line}{new string(' ', width - line.Length - 2 - padding*2)} |");
-        }
-        sb.AppendLine(separator);
-        return sb.ToString();
-    }
+    
 
     private static void ShowMenu() {
         // mostra opcoes de jogo
+        Tui.Option[] options = [
+            new("Iniciar servidor"),
+            new("Entrar em uma partida"),
+            new("Configurações"),
+        ];
+        Tui.Option? opt = Tui.ShowMenu("Selecione uma opção", options);
+        if (opt == null) {
+            Console.WriteLine("Erro brabo");
+            return;
+        }
+        if (opt == options[0]) {
+            Console.WriteLine("iniciar");
+        }else if (opt == options[1]) {
+            Console.WriteLine("entrar");
+        }else if (opt == options[2]) {
+            Console.WriteLine("config");
+        }
     }
 }
