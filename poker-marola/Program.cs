@@ -16,7 +16,7 @@ internal static class Program
     private static void DisplaySplashScreen() {
         Console.WriteLine(
             """
-            
+
              _____      _                   
             |  __ \    | |                  
             | |__) |__ | | _____ _ __       
@@ -28,7 +28,7 @@ internal static class Program
             | |\/| |/ _` | '__/ _ \| |/ _` |
             | |  | | (_| | | | (_) | | (_| |
             |_|  |_|\__,_|_|  \___/|_|\__,_|
-                         
+
             """);
         string[] authors = [
             "Autores: ",
@@ -40,8 +40,6 @@ internal static class Program
         Console.WriteLine(Tui.BuildMessageBox([ $"Versão: {version.ToString(3)}" ]));
     }
     
-    
-
     private static void ShowMenu() {
         // mostra opcoes de jogo
         Tui.Option[] options = [
@@ -55,6 +53,9 @@ internal static class Program
             return;
         }
         if (opt == options[0]) {
+            Server server = new Server();
+            server.StartAsync();
+            Console.ReadKey();
             Console.WriteLine("iniciar");
         }else if (opt == options[1]) {
             Console.WriteLine("entrar");
