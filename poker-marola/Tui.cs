@@ -20,12 +20,12 @@ public static class Tui {
         return sb.ToString();
     }
 
-    public static Option? ShowMenu(string prompt, Option[] options) {
+    public static int ShowMenu(string prompt, Option[] options) {
         if (options.Length <= 0) {
-            return null;
+            return -1;
         }
         if (options.Length == 1) {
-            return options[0];
+            return 0;
         }
         
         string ident = "  ";
@@ -83,7 +83,7 @@ public static class Tui {
             Console.Write('\n');
         }
 
-        return selected ? options[choice-1] : null;
+        return selected ? choice-1 : -1;
     } 
 
     public class Option {

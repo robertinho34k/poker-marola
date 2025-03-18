@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using System.Text.Json;
 
 namespace poker_marola;
 
@@ -47,20 +48,74 @@ internal static class Program
             new("Entrar em uma partida"),
             new("Configurações"),
         ];
-        Tui.Option? opt = Tui.ShowMenu("Selecione uma opção", options);
-        if (opt == null) {
+        int opt = Tui.ShowMenu("Selecione uma opção", options);
+        if (opt == -1) {
             Console.WriteLine("Erro brabo");
             return;
         }
-        if (opt == options[0]) {
-            Server server = new Server();
-            server.StartAsync();
-            Console.ReadKey();
-            Console.WriteLine("iniciar");
-        }else if (opt == options[1]) {
-            Console.WriteLine("entrar");
-        }else if (opt == options[2]) {
-            Console.WriteLine("config");
+        if (opt == 0) {
+            Server server = new(new() {
+                UseNat = false
+            });
+            // aqui o server comeca a rodar
+            _ = server.StartAsync();
+            
+            // e aqui vamos no fluxo normal para entrar em um servidor
+        }else if (opt == 1) {
+            // pedir ip e porta
+        }else if (opt == 2) {
+            ShowConfiguration();
         }
+    }
+
+    private static void ShowConfiguration() {
+        string dir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "poker-marola");
+        string path = Path.Combine(dir, "user.json");
+        if (!Directory.Exists(dir)) {
+            Directory.CreateDirectory(dir);
+        }
+        if (!File.Exists(path)) {
+            var id = Guid.NewGuid();
+            var u = new User {
+                Username = User.DeriveName(id),
+                Id = id
+            };
+            File.WriteAllText(path, JsonSerializer.Serialize(u));
+        }
+        var user = JsonSerializer.Deserialize<User>(File.ReadAllText(path));
+        
+        if (user == null) {
+            var id = Guid.NewGuid();
+            user = new User {
+                Username = User.DeriveName(id),
+                Id = id
+            };
+            
+            File.WriteAllText(path, JsonSerializer.Serialize(user));
+        }
+
+        Console.WriteLine(Tui.BuildMessageBox([
+            "Configurações",
+            $"Nome: {user.Username}",
+            $"Id: {user.Id}",
+        ]));
+        int opt;
+        do {
+            opt = Tui.ShowMenu("Selecione uma opção:", [
+                new Tui.Option("Alterar nome"),
+                new Tui.Option("Criar novo Id"),
+                new Tui.Option("Voltar")
+            ]);
+            if (opt == 0) {
+                Console.Write("Digite o novo nome: ");
+                user.Username = Console.ReadLine();
+            }else if (opt == 1) {
+                user.Id = Guid.NewGuid();
+            }
+
+            File.WriteAllText(path, JsonSerializer.Serialize(user));
+
+        }while(opt != -1 && opt != 2);
     }
 }
