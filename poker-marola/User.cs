@@ -28,7 +28,7 @@ public class User {
             5 => "Corajoso",
             6 => "Cauteloso",
             7 => "Inteligente",
-            _ => "Covarde"
+            _ => throw new InvalidOperationException("Value out of range")
         };
         string s2 = i2 switch {
             0 => "Leão",
@@ -39,7 +39,7 @@ public class User {
             5 => "Cobra",
             6 => "Gato",
             7 => "Rato",
-            _ => "Cachorro"
+            _ => throw new InvalidOperationException("Value out of range")
         };
         string s3 = i3 switch {
             0 => "de Fogo",
@@ -50,7 +50,7 @@ public class User {
             5 => "de Luz",
             6 => "das Trevas",
             7 => "de Terra",
-            _ => "de Terra"
+            _ => throw new InvalidOperationException("Value out of range")
         };
         return $"{s1} {s2} {s3}";
     }

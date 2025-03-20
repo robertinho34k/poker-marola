@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 
 namespace poker_marola;
 
@@ -93,4 +94,142 @@ public static class Tui {
             Text = text;
         }
     }
+
+    public static IPAddress ReadIp(string prompt) {
+        Console.WriteLine(prompt);
+
+        const string indicator = "> ";
+        Console.Write(indicator);
+        char[] validChars = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
+        bool validInput = false;
+        const int maxlen = 15;
+        IPAddress result = IPAddress.None;
+        while (!validInput) {
+
+            ConsoleKeyInfo key = default;
+            bool enter = false;
+            StringBuilder sb = new();
+            do {
+                key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Backspace && sb.Length > 0) {
+                    Console.Write("\b \b");
+                    sb.Remove(sb.Length - 1, 1);
+                    continue;
+                }
+
+                if (key.Key == ConsoleKey.Enter&& sb.Length > 0) {
+                    enter = true;
+                }
+                
+                if (!validChars.Contains(key.KeyChar) || sb.Length >= maxlen) {
+                    continue;
+                }
+                    
+                sb.Append(key.KeyChar);
+                Console.Write(key.KeyChar);
+            } while (!enter);
+            
+            string input = sb.ToString();
+            if (input.Count(x => x == '.') != 3) {
+                Console.CursorLeft = indicator.Length;
+                Console.Write(new string(' ', maxlen+1));
+                Console.CursorLeft = indicator.Length;
+                continue;
+            }
+            if (!IPAddress.TryParse(input, out IPAddress ip)) {
+                Console.CursorLeft = indicator.Length;
+                Console.Write(new string(' ', maxlen+1));
+                Console.CursorLeft = indicator.Length;
+                continue;
+            }
+            
+            IPAddress[] bannedIps = [
+                IPAddress.Any, IPAddress.Broadcast, IPAddress.IPv6Any, IPAddress.IPv6None, IPAddress.None
+            ];
+            if (bannedIps.Any(x => ip.Equals(x))) {
+                Console.CursorLeft = indicator.Length;
+                Console.Write(new string(' ', maxlen+1));
+                Console.CursorLeft = indicator.Length;
+                continue;
+            }
+
+            result = ip;
+            validInput = true;
+            Console.Write('\n');
+        }
+        
+        return result;
+    }
+
+    public static int ReadInt(string prompt, Func<int, bool> validator) {
+        Console.WriteLine(prompt);
+
+        const string indicator = "> ";
+        Console.Write(indicator);
+        bool validInput = false;
+        const int maxlen = 5;
+        int result = -1;
+        while (!validInput) {
+
+            ConsoleKeyInfo key = default;
+            bool enter = false;
+            StringBuilder sb = new();
+            do {
+                key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Backspace && sb.Length > 0) {
+                    Console.Write("\b \b");
+                    sb.Remove(sb.Length - 1, 1);
+                    continue;
+                }
+
+                if (key.Key == ConsoleKey.Enter && sb.Length > 0) {
+                    enter = true;
+                }
+                
+                if (key.KeyChar is < '0' or > '9' || sb.Length >= maxlen) {
+                    continue;
+                }
+                    
+                sb.Append(key.KeyChar);
+                Console.Write(key.KeyChar);
+            } while (!enter);
+            
+            string input = sb.ToString();
+            if (!int.TryParse(input, out int port)) {
+                Console.CursorLeft = indicator.Length;
+                Console.Write(new string(' ', maxlen+1));
+                Console.CursorLeft = indicator.Length;
+                continue;
+            }
+
+            if (!validator(port)) {
+                Console.CursorLeft = indicator.Length;
+                Console.Write(new string(' ', maxlen+1));
+                Console.CursorLeft = indicator.Length;
+                continue;
+            }
+            
+            result = port;
+            validInput = true;
+            Console.Write('\n');
+        }
+        
+        return result;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

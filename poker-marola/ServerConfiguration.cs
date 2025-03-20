@@ -14,4 +14,9 @@ public struct ServerConfiguration {
     /// Se vai usar NAT Hole Punching para permitir conexoes de outros jogadores.
     /// </summary>
     public bool UseNat { get; set; }
+    
+    /// <summary>
+    /// Quantos players podem jogar ao mesmo tempo na sessao.
+    /// </summary>
+    public int MaxPlayers { get; set; }
 }
